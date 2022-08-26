@@ -1,17 +1,17 @@
 package com.example.qiniu.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
+
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -32,7 +32,7 @@ public class ImgController {
     public void GetImg(@PathVariable String url, HttpServletResponse response, HttpServletRequest request) throws IOException {
 
         // 不知道为什么会请求 http://qiniu.hanbing777.top/favicon.ico, 我选择禁用
-        if (url.equals("favicon.ico")){
+        if (url.equals("favicon.ico")) {
             return;
         }
 
@@ -40,7 +40,7 @@ public class ImgController {
         String path = request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE).toString();
 
         //获得文件后缀名(jpg/png)
-        String type = path.substring(path.lastIndexOf(".")+1);
+        String type = path.substring(path.lastIndexOf(".") + 1);
         System.out.println(type);
 
         //设置图片格式,我的测试是:下面代码jpg和png都可以
@@ -48,8 +48,8 @@ public class ImgController {
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         response.addHeader("Cache-Control", "post-check=0, pre-check=0");
         response.setHeader("Pragma", "no-cache");
-        response.setContentType("image/"+type);
-        URLConnection urlConnection = new URL(imgPath+path).openConnection();
+        response.setContentType("image/" + type);
+        URLConnection urlConnection = new URL(imgPath + path).openConnection();
         urlConnection.connect();
         InputStream inputStream = urlConnection.getInputStream();
         BufferedImage image = ImageIO.read(inputStream);
