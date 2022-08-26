@@ -39,12 +39,16 @@ public class ImgController {
         //得到忽略"/"的url
         String path = request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE).toString();
 
+        //获得文件后缀名(jpg/png)
+        String type = path.substring(path.lastIndexOf(".")+1);
+        System.out.println(type);
+
         //设置图片格式,我的测试是:下面代码jpg和png都可以
         response.setDateHeader("Expires", 0);
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         response.addHeader("Cache-Control", "post-check=0, pre-check=0");
         response.setHeader("Pragma", "no-cache");
-        response.setContentType("image/jpeg");
+        response.setContentType("image/"+type);
         URLConnection urlConnection = new URL(imgPath+path).openConnection();
         urlConnection.connect();
         InputStream inputStream = urlConnection.getInputStream();
@@ -52,7 +56,7 @@ public class ImgController {
         ServletOutputStream outputStream = null;
         try {
             outputStream = response.getOutputStream();
-            ImageIO.write(image, "jpg", outputStream);
+            ImageIO.write(image, type, outputStream);
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
